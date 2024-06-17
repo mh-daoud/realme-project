@@ -12,7 +12,7 @@ export const router: RouteHandler = {
         <h1>Welcome to realme demo</h1>
         <p>List of services</p>
         <ul>
-         ${Object.values(RouteEndpoint).map((endpoint) => `<li><p>${endpoint}</p></li>`).join('')}
+         ${Object.values(RouteEndpoint).map((endpoint) => `<li><a href='${endpoint}'>${endpoint}</a></li>`).join('')}
         </ul>
         </body>
         </html>`

@@ -1,8 +1,13 @@
-import { mockMedias } from "../../mockData/media";
+import dbClient from "../../dbClient";
 import { RouteHandler } from "../types";
 
 export const router : RouteHandler = {
-    handleRoute(req, res) {
-        res.end(JSON.stringify({media:mockMedias}));
+    handleRoute: async (req, res) => {
+        const db = dbClient.getDb()
+        const books = await db.collection('books')
+        .find()
+        .sort({author: 1})
+        .toArray()
+        res.end(JSON.stringify({media:books}));
     },
 }

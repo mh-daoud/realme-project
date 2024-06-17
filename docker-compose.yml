@@ -14,6 +14,8 @@ services:
     build:
       context: ./media/
       dockerfile: Dockerfile
+    environment:
+      MONGODB_CONNECTION_STRING: mongodb://mongodb:27017/bookstore
     container_name: media
     working_dir: /app
     ports:
