@@ -15,13 +15,29 @@ services:
       context: ./media/
       dockerfile: Dockerfile
     environment:
-      MONGODB_CONNECTION_STRING: mongodb://mongodb:27017/bookstore
+      MONGODB_CONNECTION_STRING: mongodb://mongodb:27017/realme
     container_name: media
     working_dir: /app
     ports:
       - "3000:3000"
     volumes:
       - ./media/:/app
+      - ./common/:/common
+    command: ["yarn", "dev"]
+
+  auth:
+    build:
+      context: ./auth/
+      dockerfile: Dockerfile
+    environment:
+      MONGODB_CONNECTION_STRING: mongodb://mongodb:27017/realme
+    container_name: auth
+    working_dir: /app
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./auth/:/app
+      - ./common/:/common
     command: ["yarn", "dev"]
 
 volumes:

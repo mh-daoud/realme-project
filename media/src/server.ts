@@ -1,34 +1,24 @@
-import {createServer} from 'http'; 
-import { router } from './route';
-import dbClient from './dbClient'
-// import express from 'express'
+import express from 'express'
+require('express-async-errors');
+import notFoundMiddleware from '@common/middlewares/notFoundMiddleware'
+import errorHandlerMiddleware from '@common/middlewares/errorHandlerMiddleware'
 
-// const app2 = express()
-
-// app2.listen()
-
-
-const hostname = process.env?.HOSTNAME ?? "0.0.0.0";
 const port =  process.env?.PORT ?  parseInt(process.env?.PORT) : 3000;
-const server = createServer((req, res) => {
-  router.handleRoute(req,res)
+
+const app = express()
+
+app.use(express.json())
+
+app.get('/', (req, res) => res.end('media is working fine!'))
+
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
+
+const connectionString = process.env.MONGODB_CONNECTION_STRING ?? ''
+
+app.listen(port, () => {
+    console.log(` media server running at ${port}`);
 });
 
-const app = () => {
-  const connectionString = process.env.MONGODB_CONNECTION_STRING ?? ''
-  dbClient.connectToDB(connectionString,(error) => {
-    if(error){
-      console.log({message: 'unable to connect to db', error})
-      return
-    } 
-    server.listen(port, hostname, () => {
-      console.log(`Server running at http://${hostname}:${port}/`);
-    });
-  })
-}
-
-
-
-
-app()
 
