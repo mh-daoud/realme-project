@@ -20,8 +20,6 @@ app.use(express.json())
 
 app.use('/api/auth/v1/', userRoute)
 app.get('/', (req,res) => res.end('auth is working fine!'))
-
-
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
@@ -31,7 +29,7 @@ const start =  async () => {
             console.log(`auth service listening on port ${port} http://localhost:${port}/`)
         })
         
-    }).catch((error) => console.log("ERROR failed to connect to db with error ", error))
+    }).catch((error) => console.log("ERROR failed to connect to db with error ", error, connectionString))
 }
 
 

@@ -34,7 +34,7 @@ const errorHandlerMiddleware = (err: IError , req: Request, res: Response, next?
     customError.statusCode = 404
   }
 
-  return res.status(500).json({ msg: customError.msg })
+  return res.status(err.statusCode ?? 500).json({ msg: customError.msg })
 }
 
 export default errorHandlerMiddleware

@@ -19,7 +19,7 @@ services:
     container_name: media
     working_dir: /app
     ports:
-      - "3000:3000"
+      - "3002:3000"
 
   auth:
     build:
@@ -31,7 +31,7 @@ services:
     container_name: auth
     working_dir: /app
     ports:
-      - "3002:3000"
+      - "3000:3000"
 
 volumes:
   mongodb_data:

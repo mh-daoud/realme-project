@@ -32,9 +32,6 @@ export const createUserService = async (input: CreateUserServiceInput) : Promise
     
 }
 
-
-
-
 export const loginUserService = async (input: LoginUserServiceInput): Promise<LoginUserServiceOutput> => {
     const {username, password} = input ?? {}
     const user = await UserModel.findOne({email: username}).select('+password')
