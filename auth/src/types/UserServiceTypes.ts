@@ -22,3 +22,13 @@ export interface LoginUserServiceOutput {
     user:User
     jwtToken: string
 }
+
+export interface GetUserInfoServiceInput {
+    userId?: string
+    email?: string
+}
+
+export interface GetUserInfoServiceOutput {
+    user: User | null
+    jwtToken: string | null
+}

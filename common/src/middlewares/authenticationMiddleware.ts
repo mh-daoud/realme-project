@@ -1,10 +1,11 @@
-import { Request, Response } from "express"
+import {  Response } from "express"
 import UnauthenticatedError from "../errorModels/UnauthenticatedError"
 import BadRequestError from "../errorModels/BadRequestError"
 import jwt from 'jsonwebtoken'
 import { UserDecodedJWT } from "../types/User"
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest"
 
-export const authenticationMiddleware = (req: Request, res: Response) => {
+export const authenticationMiddleware = (req: AuthenticatedRequest, res: Response, next?: () => void) => {
     const {authorization} = req.headers ?? {}
 
     if(!authorization || !authorization.startsWith('Bearer ')) {
@@ -16,9 +17,13 @@ export const authenticationMiddleware = (req: Request, res: Response) => {
     }
     try {
         const jwtToken = authorization.split('Bearer ')?.[1]
-        const decodedToken =  jwt.verify(jwtToken, jwtSecret)  
-        
-        return decodedToken as UserDecodedJWT
+        const decodedToken =  jwt.verify(jwtToken, jwtSecret) as UserDecodedJWT 
+
+        req.user = { userId: decodedToken.userId , email: decodedToken.email}
+        if(next) {
+            return next()
+        }
+        return decodedToken
     }
 
     catch {

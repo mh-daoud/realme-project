@@ -2,7 +2,6 @@ import { ObjectId } from "mongoose"
 
 export interface Media {
     name: string
-    url: string
     fileType: MediaFileType
     mediaType: MediaType
     description: string,

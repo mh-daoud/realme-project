@@ -13,7 +13,7 @@ const connectionString = process.env.MONGODB_CONNECTION_STRING ?? ''
 
 const app = express()
 
-app.use(express.json())
+app.use(express.json({limit: '50mb'}))
 
 app.use('/api/media/v1/', authenticationMiddleware, mediaRouter)
 app.get('/', (req, res) => res.end('media is working fine!'))

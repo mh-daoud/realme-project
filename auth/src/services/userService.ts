@@ -1,7 +1,7 @@
 import BadRequestError from "@common/errorModels/BadRequestError";
 import UserModel from "@common/models/User.model";
 import configUtil from "@common/utils/configUtil";
-import { CreateUserServiceInput, CreateUserServiceOutput, LoginUserServiceInput, LoginUserServiceOutput } from "src/types/UserServiceTypes";
+import { CreateUserServiceInput, CreateUserServiceOutput, GetUserInfoServiceInput, GetUserInfoServiceOutput, LoginUserServiceInput, LoginUserServiceOutput } from "src/types/UserServiceTypes";
 
 export const createUserService = async (input: CreateUserServiceInput) : Promise<CreateUserServiceOutput> => {
     const {username, nickname, password, displayName} = input ?? {}
@@ -22,7 +22,7 @@ export const createUserService = async (input: CreateUserServiceInput) : Promise
         const jwtToken = user.createJwt(jwtTokenSecret)
     
         return {
-            user,
+            user: user.toJSON(),
             jwtToken
         }
     }
@@ -46,7 +46,31 @@ export const loginUserService = async (input: LoginUserServiceInput): Promise<Lo
         throw new BadRequestError("username or password are invalid")
     }
     return {
-        user,
+        user: user.toJSON(),
         jwtToken: user.createJwt(jwtTokenSecret)
+    }
+}
+
+
+export const getUserInfoService = async (input: GetUserInfoServiceInput) : Promise<GetUserInfoServiceOutput> => {
+    const {userId, email} = input ?? {}
+    const jwtTokenSecret = configUtil.getJwtSecret()
+
+    if(!userId || !email) {
+        throw new BadRequestError("user id or email required")
+    }
+    if(userId) {
+        const user = await UserModel.findById(userId)
+        return {
+            user: user?.toJSON() ?? null,
+            jwtToken: user?.createJwt(jwtTokenSecret) ?? null
+        }
+    }
+    else {
+        const user = await UserModel.findOne({email: email})
+        return {
+            user: user?.toJSON() ?? null,
+            jwtToken: user?.createJwt(jwtTokenSecret) ?? null
+        }
     }
 }

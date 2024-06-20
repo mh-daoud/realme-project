@@ -1,4 +1,5 @@
 import { addMediaService, deleteMediaService, getMediaDetailsService, listMediaService, updateMediaService } from "common/services/mediaService"
+import { AddMediaServiceInput } from "common/types/MediaServiceTypes"
 import { Request, Response } from "express"
 
 export const listMedia = async (req: Request, res: Response) => {
@@ -7,7 +8,27 @@ export const listMedia = async (req: Request, res: Response) => {
 }
 
 export const addMedia = async (req: Request, res: Response) => {
-    addMediaService()
+    const {  name,
+        description,
+        tagsIds,
+        authorId,
+        status,
+        isDeleted,
+        allowComments,
+        videoBase64} = req.body ?? {}
+    const addMediaInput: AddMediaServiceInput  = {
+        media: {
+            name,
+        description,
+        tagsIds,
+        authorId,
+        status,
+        isDeleted,
+        allowComments
+        },
+        videoBase64
+    }
+    const media = await addMediaService(addMediaInput)
     res.json({message: 'ok!'})
 }
 

@@ -1,5 +1,7 @@
+import UnauthenticatedError from "@common/errorModels/UnauthenticatedError"
+import { AuthenticatedRequest } from "@common/types/AuthenticatedRequest"
 import { Request, Response } from "express"
-import { createUserService, loginUserService } from "src/services/userService"
+import { createUserService, getUserInfoService, loginUserService } from "src/services/userService"
 import { CreateUserRouteResponse } from "src/types/UserRouteTypes"
 
 export const createUser =  async (req: Request, res: Response<CreateUserRouteResponse> ) => {
@@ -22,4 +24,14 @@ export const login = async (req: Request, res: Response) => {
 
     const loginUserPayload = await loginUserService({username, password})
     res.json({...loginUserPayload, success: true})
+}
+
+export const getUserInfo = async (req: AuthenticatedRequest, res: Response<CreateUserRouteResponse>) => {
+    const {user} = req ?? {}
+    const {userId, email} = user ?? {}
+    if(!userId || !email) {
+        throw new UnauthenticatedError("you are unauthorized")
+    }
+    const getUserInfoPayload = await getUserInfoService({userId, email})
+    res.json({...getUserInfoPayload, success: true})
 }
