@@ -7,12 +7,8 @@ ENV HOSTNAME='0.0.0.0'
 
 COPY package.json ./
 COPY yarn.lock ./
-COPY tsconfig.json ./
-COPY ./src ./src
-
-#Install dependecnies 
-RUN yarn install \
-    && yarn build 
+COPY ./node_modules ./node_modules
+COPY ./build ./build
 
 EXPOSE 3000
 

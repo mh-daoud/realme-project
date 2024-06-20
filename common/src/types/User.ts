@@ -22,3 +22,8 @@ export enum UserStatus {
     Active = 'Active',
     Banned = 'Banned'
 }
+
+export interface UserDecodedJWT {
+    userId: string
+    email: string
+}

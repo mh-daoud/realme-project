@@ -1,29 +1,15 @@
 import {Schema, model, Model} from "mongoose";
 import { User, UserStatus } from "../types/User";
+import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
 
-export interface UserWithHiddenFields extends User {
+export interface UserWithHiddenFields extends User, Document {
     password: string
-}
-
-export interface UserDecodedJWT {
-    userId: string
-    email: string
-}
-
-
-export interface UserMethods {
     createJwt: (jwtSecret: string, expiry?: string) => string
-    verifyJwt: (token: string, jwtSecret: string) => UserDecodedJWT | undefined | null
     comparePassword: (password: string) => Promise<boolean>
 }
 
-
-type UserModel = Model<User , {}, UserMethods>;
-
-
-const userSchema = new Schema<UserWithHiddenFields, UserModel, UserMethods>({
+const UserSchema = new Schema<UserWithHiddenFields>({
     email: {
         type: String,
         required: [true, 'email is required'],
@@ -36,6 +22,7 @@ const userSchema = new Schema<UserWithHiddenFields, UserModel, UserMethods>({
     password: {
         type: String,
         required: [true, 'password is required'],
+        select: false
     },
     displayName: {
         type: String,
@@ -71,7 +58,7 @@ const userSchema = new Schema<UserWithHiddenFields, UserModel, UserMethods>({
         required: true,
         lowercase: true,
         enum: {
-            values: Object.values(UserStatus),
+            values: Object.values(UserStatus).map((status) => status.toLowerCase()),
         },
         default: UserStatus.Active
     },
@@ -85,7 +72,7 @@ const userSchema = new Schema<UserWithHiddenFields, UserModel, UserMethods>({
     updatedAt: {type: Date}
 })
 
-userSchema.methods.createJwt = function (jwtSecret: string, expiry?: string) {
+UserSchema.methods.createJwt = function (jwtSecret: string, expiry?: string) {
     const token = jwt.sign({userId: this._id, email: this.email}, jwtSecret, {
         expiresIn: expiry ?? 3600
     })
@@ -93,19 +80,31 @@ userSchema.methods.createJwt = function (jwtSecret: string, expiry?: string) {
     return token
 }
 
-userSchema.methods.verifyJwt = function(token: string, jwtSecret: string) {
-    const decodedToken =  jwt.verify(token,jwtSecret)  
-    if(!decodedToken || typeof decodedToken !== 'object' || !decodedToken?.userId) {
-        return null
-    }
-    return decodedToken as UserDecodedJWT
-}
+UserSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    const salt = await bcryptjs.genSalt(10)
+    const encryptedPassword = await bcryptjs.hash(this.password, salt)
+    this.password = encryptedPassword
+    this
+    next()
+})
 
-userSchema.methods.comparePassword = async function(password: string){
-    const isCorrect =  await bcrypt.compare(password, this.password)
+UserSchema.set('toJSON', {
+    transform: function (doc, ret, options) {
+        delete ret.password;
+        return ret;
+    }
+})
+
+UserSchema.pre('find', function(next) {
+    next();
+});
+
+UserSchema.methods.comparePassword = async function(password: string){
+    const isCorrect =  await bcryptjs.compare(password, this.password)
     return isCorrect
 }
 
-const userModel = model<UserWithHiddenFields>('User', userSchema)
+const UserModel: Model<UserWithHiddenFields> = model<UserWithHiddenFields>('User', UserSchema)
 
-export default userModel
+export default UserModel

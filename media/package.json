@@ -7,8 +7,8 @@
     "dev": "nodemon --watch \"*.ts\" --exec \"ts-node\" --project ./tsconfig.json ./src/server.ts",
     "build": "yarn tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node ./build/media/src/server.js",
-    "docker-build": "docker build -t realme-media-services .",
-    "docker-run": "docker run -p 3000:3000 realme-media-services"
+    "docker-build": "yarn build && docker build -t media-service .",
+    "docker-run": "docker run --name media -p 3000:3000 media-service"
   },
   "license": "MIT",
   "devDependencies": {

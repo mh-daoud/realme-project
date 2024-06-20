@@ -1,7 +1,16 @@
 import { StatusCodes } from "http-status-codes"
 import {Request, Response} from 'express'
+import CustomAPIError from "../errorModels/CustomAPIError"
 
-const errorHandlerMiddleware = (err: any, req: Request, res: Response, next?: () => void) => {
+
+interface IError extends CustomAPIError {
+  errors?: any
+  code?: number
+  keyValue?: any
+  value: any
+}
+
+const errorHandlerMiddleware = (err: IError , req: Request, res: Response, next?: () => void) => {
   let customError = {
     // set default
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
@@ -25,7 +34,7 @@ const errorHandlerMiddleware = (err: any, req: Request, res: Response, next?: ()
     customError.statusCode = 404
   }
 
-  return res.status(customError.statusCode).json({ msg: customError.msg })
+  return res.status(500).json({ msg: customError.msg })
 }
 
 export default errorHandlerMiddleware

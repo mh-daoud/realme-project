@@ -20,10 +20,6 @@ services:
     working_dir: /app
     ports:
       - "3000:3000"
-    volumes:
-      - ./media/:/app
-      - ./common/:/common
-    command: ["yarn", "dev"]
 
   auth:
     build:
@@ -31,14 +27,11 @@ services:
       dockerfile: Dockerfile
     environment:
       MONGODB_CONNECTION_STRING: mongodb://mongodb:27017/realme
+      JWT_SECRET: "super_secret"
     container_name: auth
     working_dir: /app
     ports:
       - "3002:3000"
-    volumes:
-      - ./auth/:/app
-      - ./common/:/common
-    command: ["yarn", "dev"]
 
 volumes:
   mongodb_data:

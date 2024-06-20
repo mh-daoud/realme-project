@@ -1,14 +1,18 @@
 import express from 'express'
-import userRoute from './routes/userRoute'
+import 'express-async-errors';
+import userRoute from 'src/routes/userRoute'
 import notFoundMiddleware from '@common/middlewares/notFoundMiddleware'
 import errorHandlerMiddleware from '@common/middlewares/errorHandlerMiddleware'
-require('express-async-errors');
+import { connectToDb } from '@common/db';
+import dotenv from 'dotenv'
 
 // const cors = require('cors');
 // const xss = require('xss-clean');
 // const rateLimiter = require('express-rate-limit');
 
+dotenv.config()
 const port = process.env.PORT ?? 3000
+const connectionString = process.env.MONGODB_CONNECTION_STRING ?? ''
 
 const app = express()
 
@@ -21,7 +25,14 @@ app.get('/', (req,res) => res.end('auth is working fine!'))
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+const start =  async () => {
+    connectToDb(connectionString).then(() => {
+        app.listen(port, () => {
+            console.log(`auth service listening on port ${port} http://localhost:${port}/`)
+        })
+        
+    }).catch((error) => console.log("ERROR failed to connect to db with error ", error))
+}
 
-app.listen(port, () => {
-    console.log(`auth service listening on port ${port}`)
-})
+
+start()
