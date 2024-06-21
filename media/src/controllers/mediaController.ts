@@ -1,38 +1,48 @@
-import { addMediaService, deleteMediaService, getMediaDetailsService, listMediaService, updateMediaService } from "common/services/mediaService"
-import { AddMediaServiceInput } from "common/types/MediaServiceTypes"
+import { AuthenticatedRequest } from "@common/types/AuthenticatedRequest"
+import { addMediaService, deleteMediaService, getMediaDetailsService, listMediaService, updateMediaService } from "src/services/mediaService"
+import { AddMediaServiceInput } from "src/types/MediaServiceTypes"
 import { Request, Response } from "express"
+import path from 'path'
 
 export const listMedia = async (req: Request, res: Response) => {
-    listMediaService()
-    res.json({message: 'ok!'})
+    const {page, pageSize, filter} = req.body
+    const listMedia = await listMediaService({filter, page, pageSize})
+    res.json({...listMedia, success: true})
 }
 
-export const addMedia = async (req: Request, res: Response) => {
+export const addMedia = async (req: AuthenticatedRequest, res: Response) => {
     const {  name,
         description,
         tagsIds,
         authorId,
         status,
-        isDeleted,
         allowComments,
-        videoBase64} = req.body ?? {}
+        videoBase64,
+        extension
+    } = req.body ?? {}
+
+    const {jwtToken} = req.user ?? {}
+    
     const addMediaInput: AddMediaServiceInput  = {
+        jwtToken: jwtToken ?? "",
         media: {
-            name,
+        name,
         description,
         tagsIds,
         authorId,
         status,
-        isDeleted,
         allowComments
         },
-        videoBase64
+        videoBase64,
+        extension
     }
+    
     const media = await addMediaService(addMediaInput)
-    res.json({message: 'ok!'})
+    res.json({media, success: true})
 }
 
 export const updateMedia = async (req: Request, res: Response) => {
+   
     updateMediaService()
     res.json({message: 'ok!'})
 }

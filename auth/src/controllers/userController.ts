@@ -27,11 +27,7 @@ export const login = async (req: Request, res: Response) => {
 }
 
 export const getUserInfo = async (req: AuthenticatedRequest, res: Response<CreateUserRouteResponse>) => {
-    const {user} = req ?? {}
-    const {userId, email} = user ?? {}
-    if(!userId || !email) {
-        throw new UnauthenticatedError("you are unauthorized")
-    }
-    const getUserInfoPayload = await getUserInfoService({userId, email})
+    const {userId} = req.body ?? {}
+    const getUserInfoPayload = await getUserInfoService({userId})
     res.json({...getUserInfoPayload, success: true})
 }

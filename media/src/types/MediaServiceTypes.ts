@@ -9,6 +9,18 @@ interface MediaMetadata {
 }
 
 export interface  AddMediaServiceInput {
+    jwtToken: string
     media: MediaMetadata,
     videoBase64: string
+    extension: string
+}
+
+
+export interface ListMediaServiceInput {
+    filter: {
+        authorId?: string,
+        search?: string
+    },
+    page: number
+    pageSize: number
 }

@@ -1,5 +1,5 @@
-import { addMedia, deleteMedia, getMediaDetails, listMedia, updateMedia } from 'common/controllers/mediaController'
-import { RouteEndpoint } from 'common/types/RouteEndpoint'
+import { addMedia, deleteMedia, getMediaDetails, listMedia, updateMedia } from 'src/controllers/mediaController'
+import { RouteEndpoint } from 'src/types/RouteEndpoint'
 import {Router} from 'express'
 
 const router =  Router()

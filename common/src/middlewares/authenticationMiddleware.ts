@@ -19,7 +19,7 @@ export const authenticationMiddleware = (req: AuthenticatedRequest, res: Respons
         const jwtToken = authorization.split('Bearer ')?.[1]
         const decodedToken =  jwt.verify(jwtToken, jwtSecret) as UserDecodedJWT 
 
-        req.user = { userId: decodedToken.userId , email: decodedToken.email}
+        req.user = { userId: decodedToken.userId , email: decodedToken.email, jwtToken: jwtToken}
         if(next) {
             return next()
         }

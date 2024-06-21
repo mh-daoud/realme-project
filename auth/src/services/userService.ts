@@ -56,7 +56,7 @@ export const getUserInfoService = async (input: GetUserInfoServiceInput) : Promi
     const {userId, email} = input ?? {}
     const jwtTokenSecret = configUtil.getJwtSecret()
 
-    if(!userId || !email) {
+    if(!userId && !email) {
         throw new BadRequestError("user id or email required")
     }
     if(userId) {

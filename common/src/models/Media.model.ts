@@ -92,6 +92,10 @@ const MediaSchema = new Schema<MediaEntity>({
     }
 })
 
+MediaSchema.index({
+    name: 'text',
+    description: 'text'
+})
 
 const MediaModel: Model<Media> = model<Media>('Media', MediaSchema)
 

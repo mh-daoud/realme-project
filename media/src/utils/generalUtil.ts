@@ -1,3 +1,4 @@
+import { MediaFileType } from '@common/types/Media';
 import path from 'path'
 
 export const  cleanFilename = (input: string) => {
@@ -17,4 +18,14 @@ export const  cleanFilename = (input: string) => {
     }
 
     return cleaned;
+}
+
+
+export const  getMediaFileType = (input: string): MediaFileType => {
+    // Check if the input string is a valid enum value
+    if (Object.values(MediaFileType).includes(input.toLowerCase() as MediaFileType)) {
+        return input?.toLowerCase() as MediaFileType;
+    }
+    // Default to BASE if the input is not a valid enum value
+    return MediaFileType.MP4;
 }
